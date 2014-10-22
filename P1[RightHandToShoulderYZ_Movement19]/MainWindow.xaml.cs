@@ -359,11 +359,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
 
             // Move detection usage!
-            // I create new "Pen" in green or red to show if move is correct or not.
+            // I create a new "Pen" in green or red to show if move is correct or not.
             Pen correctMove = new Pen(Brushes.Green, 5);
             Pen incorrectMove = new Pen(Brushes.Red, 5);
             if (RightHandToShoulderYZDetector.myZones(jointType0, jointType1))
-            {   // if this zones are involved in my deteccion, I will draw it with 
+            {   // if this zones are involved in my deteccion, I will detect and draw it with 
                 // special colors.
                 if (RightHandToShoulderYZDetector.detection(skeleton))
                 {
@@ -375,7 +375,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     drawPen = incorrectMove;
                     Console.WriteLine("not detected..");
                 }
-                // More info
+
+                // More info in the screen :)
                 if(RightHandToShoulderYZDetector.status0())
                     status0.Foreground = new SolidColorBrush(Colors.Green);
                 else
@@ -388,13 +389,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     status90.Foreground = new SolidColorBrush(Colors.Green);
                 else
                     status90.Foreground = new SolidColorBrush(Colors.Red);
-                if (RightHandToShoulderYZDetector.statusWeight())
-                    statusWeight.Foreground = new SolidColorBrush(Colors.Green);
+                if (RightHandToShoulderYZDetector.statusHeight())
+                    statusHeight.Foreground = new SolidColorBrush(Colors.Green);
                 else
-                    statusWeight.Foreground = new SolidColorBrush(Colors.Red);
+                    statusHeight.Foreground = new SolidColorBrush(Colors.Red);
                 keyAngle.Text = "KeyAngle: "+ RightHandToShoulderYZDetector.getKeyAngle()+"º";
             }
 
+            // Draw line with spacial colors..
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
 
@@ -417,134 +419,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 }
             }
         }
-    }
-
-
-
-
-
-
-
-    public class RightHandToShoulderYZ
-    {
-        private Skeleton skeleton;
-
-        private bool detected180;
-        private bool detected90;
-        private bool detected0;
-        private bool similarPos;
-        private double keyAngle;
-
-        public RightHandToShoulderYZ()
-        {
-            detected180 = false;
-            detected90 = false;
-            detected0 = false;
-            similarPos = false;
-
-            //skeleton = s;
-        }
-
-        public bool detection(Skeleton s)
-        { // Idea: to search for elbow's angle .
-            // 1º-> 180º (recto)
-            // 2º -> 90º (L)
-            // 3º -> 0º -> Movimiento completado.
-            // Using points to get vectors and vectors to get angles
-            skeleton = s;
-
-            Joint shoulder = skeleton.Joints[JointType.ShoulderRight];
-            Joint elbow = skeleton.Joints[JointType.ElbowRight];
-            Joint wrist = skeleton.Joints[JointType.WristRight];
-            Joint hand = skeleton.Joints[JointType.HandRight];
-
-            myPoint vShoulderElbow = new myPoint();
-            myPoint vElbowWrist = new myPoint();
-            vShoulderElbow = pointsToVector(shoulder, elbow);
-            vElbowWrist = pointsToVector(elbow, wrist);
-            keyAngle = calcAngleYZ(vShoulderElbow, vElbowWrist);
-
-            similarPos = similarY(shoulder, elbow); // I need shoulder and elbow in the same height (more or less)
-
-            if (similarPos)
-            {
-                detected180 = (similarAngle(keyAngle, 180) || detected180);
-                detected90 = (similarAngle(keyAngle, 90) || detected90);
-                detected0 = (similarAngle(keyAngle, 0) || detected0); // Be careful! I cant detect 180, 0 and 90 at the same time! So I must "remember" older detections! -> Using "|| detected0"
-            }
-            else
-                detected0 = detected90 = detected180 = false;
-
-            return (detected180 && detected90 && detected0);
-        }
-
-        private myPoint pointsToVector(Joint p1, Joint p2)
-        {
-            myPoint v = new myPoint();
-            v.x = p1.Position.X - p2.Position.X;
-            v.y = p1.Position.Y - p2.Position.Y;
-            v.z = p1.Position.Z - p2.Position.Z;
-
-            return v;
-        }
-
-        private double calcAngleYZ(myPoint v1, myPoint v2)
-        {
-            double cosin = (v1.y * v2.y) + (v1.z * v2.z);
-            double sum1 = Math.Sqrt((v1.y * v1.y) + (v1.z * v1.z));
-            double sum2 = Math.Sqrt((v2.y * v2.y) + (v2.z * v2.z));
-            cosin = cosin / (sum1*sum2);
-            double angle = Math.Acos(cosin);
-            angle = angle * (180 / Math.PI); // Convert to degrees!
-            return angle;
-        }
-
-        private bool similarY(Joint p1, Joint p2)
-        {
-            return ((p1.Position.Y < (p2.Position.Y + 2)) && (p1.Position.Y > (p2.Position.Y - 2)));
-        }
-
-        private bool similarAngle(double alpha, double beta)
-        {
-            return ((alpha < (beta + 10)) && (alpha > (beta - 10)));
-        }
-
-        public bool myZones(JointType p1, JointType p2)
-        {   // This function return true if joints types are both zones that this detection's class must detect
-            // You could use it to know if you should draw pens with special colors..
-            bool p1IsZone = (p1.Equals(JointType.ShoulderRight) || p1.Equals(JointType.ElbowRight) || p1.Equals(JointType.WristRight) || p1.Equals(JointType.HandRight));
-            bool p2IsZone = (p2.Equals(JointType.ShoulderRight) || p2.Equals(JointType.ElbowRight) || p2.Equals(JointType.WristRight) || p2.Equals(JointType.HandRight));
-
-            return (p1IsZone && p2IsZone);
-        }
-
-        public bool status180()
-        {
-            return detected180;
-        }
-        public bool status0()
-        {
-            return detected0;
-        }
-        public bool status90()
-        {
-            return detected90;
-        }
-        public bool statusWeight()
-        {
-            return similarPos;
-        }
-        public double getKeyAngle()
-        {
-            return keyAngle;
-        }
-    }
-
-    public struct myPoint
-    {
-        public double x;
-        public double y;
-        public double z;
     }
 
 }

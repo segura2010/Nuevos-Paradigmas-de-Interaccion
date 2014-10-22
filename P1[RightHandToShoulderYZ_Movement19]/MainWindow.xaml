@@ -66,8 +66,9 @@
             <TextBlock x:Name="status180" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="180º"/></TextBlock>
             <TextBlock x:Name="status90" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="90º"/></TextBlock>
             <TextBlock x:Name="status0" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="0º"/></TextBlock>
-            <TextBlock x:Name="statusWeight" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="Weight"/></TextBlock>
+            <TextBlock x:Name="statusHeight" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="Height"/></TextBlock>
             <TextBlock x:Name="keyAngle" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="Key Angle"/></TextBlock>
+
 
             <TextBlock x:Name="statusBarText" Margin="-1 0 0 0" FontSize="20"><Run Language="es-es" Text="Status"/></TextBlock>
         </StatusBar>
