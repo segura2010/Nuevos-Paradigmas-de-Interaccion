@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 // IMPORTANT! If you are not using "Microsoft.Samples.Kinect.SkeletonBasics" namespace, you must chage it!
 namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
@@ -58,7 +59,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             vElbowWrist = pointsToVector(elbow, wrist);
             keyAngle = calcAngleXY(vShoulderElbow, vElbowWrist); // Calculate key angle between vectors..
 
-            similarPos = similarY(shoulder, elbow); // I need shoulder and elbow in the same height (more or less)
+            // I need shoulder and elbow in the same height (more or less)
+            // and same depth between wrist and elbow! Dont cheat!!
+            similarPos = similarY(shoulder, elbow) && similarZ(elbow, wrist); 
 
             if (similarPos)
             {   // Only if i have shoulder and elbow in the same height i am doing the correct movement
@@ -98,6 +101,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             return ((p1.Position.Y < (p2.Position.Y + 0.05)) && (p1.Position.Y > (p2.Position.Y - 0.05)));
         }
 
+        private bool similarZ(Joint p1, Joint p2)
+        {   // I want to know if two points are at the same depth. I need a little more error rate..
+            return ((p1.Position.Z < (p2.Position.Z + 0.10)) && (p1.Position.Z > (p2.Position.Z - 0.10)));
+        }
+
         private bool similarAngle(double alpha, double beta)
         {   // This function sais if alpha is between beta+20 and beta-20 ->  beta-20 < alpha < beta+20
             // it is used to detect 0º, 90º and 180º angles.
@@ -134,6 +142,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             return keyAngle;
         }
+
     }
 
     // Useful struct to work with 3D points

@@ -63,14 +63,15 @@
         </Viewbox>
         <CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged"/>
         <StatusBar Grid.Row="3" HorizontalAlignment="Stretch" Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
-            <TextBlock x:Name="status180" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="180º"/></TextBlock>
-            <TextBlock x:Name="status90" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="90º"/></TextBlock>
-            <TextBlock x:Name="status0" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="0º"/></TextBlock>
-            <TextBlock x:Name="statusHeight" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="Height"/></TextBlock>
-            <TextBlock x:Name="keyAngle" Margin="-1 0 0 0" FontSize="30"><Run Language="es-es" Text="Key Angle"/></TextBlock>
+
+            <TextBlock x:Name="statusHeight" Margin="-3 0 0 0" FontSize="30"><Run Language="es-es" Text="Height and Depth"/></TextBlock>
+            <TextBlock x:Name="status0" Margin="10 0 0 0" FontSize="30"><Run Language="es-es" Text="0º"/></TextBlock>
+            <TextBlock x:Name="status90" Margin="10 0 0 0" FontSize="30"><Run Language="es-es" Text="90º"/></TextBlock>
+            <TextBlock x:Name="status180" Margin="10 0 0 0" FontSize="30"><Run Language="es-es" Text="180º"/></TextBlock>
+            <TextBlock x:Name="keyAngle" Margin="10 0 0 0" FontSize="30"><Run Language="es-es" Text="Key Angle"/></TextBlock>
 
 
-            <TextBlock x:Name="statusBarText" Margin="-1 0 0 0" FontSize="20"><Run Language="es-es" Text="Status"/></TextBlock>
+            <TextBlock x:Name="statusBarText" Margin="90 0 0 0" FontSize="20" HorizontalAlignment="Right"><Run Language="es-es" Text="Status Kinect: OK!"/></TextBlock>
         </StatusBar>
     </Grid>
 </Window>
