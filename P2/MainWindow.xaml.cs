@@ -104,6 +104,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         // Move detection objects!!
         private RightHandToShoulderYZ RightHandToShoulderYZDetector = new RightHandToShoulderYZ();
+        private LeftHandToShoulderYZ LeftHandToShoulderYZDetector = new LeftHandToShoulderYZ();
 
 
 
@@ -315,10 +316,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
-            //Comprueba la postura inicial,el cambio de movimiento y la postura final
-            //correct {Left Arm, Right Arm, Left Leg, Right Leg}
-            //bool[] moves;
-            //moves = ejercicio(drawingContext, skeleton, 0.4, 0.15);
+
+            ejercicio(skeleton, drawingContext);
 
             // Render Torso
             this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
@@ -348,63 +347,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight);
             this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
             this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
-
-
-            
-            if (RightHandToShoulderYZDetector.detection(skeleton))
-            {
-                Console.WriteLine("DETECTED!!");
-            }
-            else
-            {
-                Console.WriteLine("not detected..");
-            }
-
-            // More info in the screen :)
-            List<SkeletonPoint> goals = RightHandToShoulderYZDetector.updateGoals(skeleton);
-            Brush red = new SolidColorBrush(Colors.Red);
-            Brush green = new SolidColorBrush(Colors.Green);
-            if (RightHandToShoulderYZDetector.status0())
-            {
-                status0.Foreground = green;
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[0]));
-            }
-            else
-            {
-                status0.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[0]));
-            }
-            if (RightHandToShoulderYZDetector.status90())
-            {
-                status180.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[1]));
-            }
-            else
-            {
-                status180.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[1]));
-            }
-            if (RightHandToShoulderYZDetector.status180())
-            {
-                status90.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[2]));
-            }
-            else
-            {
-                status90.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[2]));
-            }
-
-            if (RightHandToShoulderYZDetector.statusHeight())
-            {
-                statusHeight.Foreground = new SolidColorBrush(Colors.Green);
-            }
-            else
-            {
-                statusHeight.Foreground = new SolidColorBrush(Colors.Red);
-            }
-            keyAngle.Text = "KeyAngle: " + RightHandToShoulderYZDetector.getKeyAngle() + "º";
-            
             
             // Render Joints
             foreach (Joint joint in skeleton.Joints)
@@ -460,46 +402,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 drawPen = this.trackedBonePen;
             }
 
-            // Move detection usage!
-            // I create a new "Pen" in green or red to show if move is correct or not.
-            /*
-            Pen correctMove = new Pen(Brushes.Green, 5);
-            Pen incorrectMove = new Pen(Brushes.Red, 5);
-            if (RightHandToShoulderYZDetector.myZones(jointType0, jointType1))
-            {   // if this zones are involved in my deteccion, I will detect and draw it with 
-                // special colors.
-                if (RightHandToShoulderYZDetector.detection(skeleton))
-                {
-                    drawPen = correctMove;
-                    Console.WriteLine("DETECTED!!");
-                }
-                else
-                {
-                    drawPen = incorrectMove;
-                    Console.WriteLine("not detected..");
-                }
-
-                // More info in the screen :)
-                if (RightHandToShoulderYZDetector.status0())
-                    status0.Foreground = new SolidColorBrush(Colors.Green);
-                else
-                    status0.Foreground = new SolidColorBrush(Colors.Red);
-                if (RightHandToShoulderYZDetector.status180())
-                    status180.Foreground = new SolidColorBrush(Colors.Green);
-                else
-                    status180.Foreground = new SolidColorBrush(Colors.Red);
-                if (RightHandToShoulderYZDetector.status90())
-                    status90.Foreground = new SolidColorBrush(Colors.Green);
-                else
-                    status90.Foreground = new SolidColorBrush(Colors.Red);
-                if (RightHandToShoulderYZDetector.statusHeight())
-                    statusHeight.Foreground = new SolidColorBrush(Colors.Green);
-                else
-                    statusHeight.Foreground = new SolidColorBrush(Colors.Red);
-                keyAngle.Text = "KeyAngle: " + RightHandToShoulderYZDetector.getKeyAngle() + "º";
-            }
-             * */
-
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
@@ -517,39 +419,166 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             return new Point(depthPoint.X, depthPoint.Y);
         }
 
-    
 
-        
-        /// <summary>
-        /// Comprueba la corrección del ejercico a llevar a cabo
-        /// </summary>
-        /// <param name="skeleton">skeleton to draw</param>
-        /// <param name="dis1">distancia a realizar en la primera postura</param>
-        /// <param name="gradoLibertad">porcentaje de movimiento que te permite respecto a la posición perfecta</param>
-        /*
-        private bool[] ejercicio(DrawingContext dc, Skeleton skeleton, double dis1, double gradoLibertad)
-        {
-            bool[] m = { true, true, true, true };
-            if (posInicial == false)        
-            {
-                drawHelperPoints(dc, skeleton, 28, dis1);
-                posInicial = getMove28(skeleton, dis1, gradoLibertad);
-                if (!posInicial) m[2] = false;
-            }
-            else
-                if (posFinal == false)
-                {
-                    //drawHelperPoints(dc, skeleton, 28);
-                }
-            //else  //Ha realizado ambos movimientos -> mostrar mensaje final
 
-            return m;
-        }
-         * */
+
+
+        // Vars and functions needed to check exercise.
+        int rightArmSuccess = 0;
+        int leftArmSuccess = 0;
+        int bothArms = 0;
 
         private void drawHelpPoints(Brush bru, DrawingContext dc, Point p)
         {
-            dc.DrawEllipse(bru, null, p, 7, 7);
+            dc.DrawEllipse(bru, null, p, 10, 10);
+        }
+
+        private void ejercicio(Skeleton skeleton, DrawingContext drawingContext)
+        {
+
+            SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
+            SkeletonPoint rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
+            SkeletonPoint leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
+
+            FormattedText bothCountText = new FormattedText(
+                                        "Ambos: " + bothArms,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText rightCountText = new FormattedText(
+                                        "Derecha: " + rightArmSuccess,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText leftCountText = new FormattedText(
+                                        "Izquierda: "+leftArmSuccess,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText bothOkText = new FormattedText(
+                                        "Fiesta Suprema!! +2",
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Green);
+
+            FormattedText oneOkText = new FormattedText(
+                                        "Perfecto! +1",
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Green);
+
+            Point textPoint = new Point(2,2);
+            drawingContext.DrawText(leftCountText, textPoint);
+
+            textPoint = new Point(410, 2);
+            drawingContext.DrawText(rightCountText, textPoint);
+
+            textPoint = new Point(240, 50);
+            drawingContext.DrawText(bothCountText, textPoint);
+
+
+            // Right Hand to Shoulder Exercise
+            bool rightOk = RightHandToShoulderYZDetector.detection(skeleton);
+            bool leftOk = LeftHandToShoulderYZDetector.detection(skeleton);
+            if (rightOk && leftOk)
+            {
+                drawingContext.DrawText(bothOkText, SkeletonPointToScreen(head));
+                bothArms++;
+                rightArmSuccess++;
+                leftArmSuccess++;
+            }
+            else if (rightOk)
+            {
+                drawingContext.DrawText(oneOkText, SkeletonPointToScreen(rightShoulder));
+                rightArmSuccess++;
+            }
+            else if (leftOk)
+            {
+                drawingContext.DrawText(oneOkText, SkeletonPointToScreen(leftShoulder));
+                leftArmSuccess++;
+            }
+
+            // More info in the screen :)
+            List<SkeletonPoint> goals = RightHandToShoulderYZDetector.updateGoals(skeleton);
+            Brush red = new SolidColorBrush(Colors.Red);
+            Brush green = new SolidColorBrush(Colors.Green);
+            if (RightHandToShoulderYZDetector.status0())
+            {
+                status0.Foreground = green;
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[0]));
+            }
+            else
+            {
+                status0.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[0]));
+            }
+            if (RightHandToShoulderYZDetector.status90())
+            {
+                status180.Foreground = new SolidColorBrush(Colors.Green);
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[1]));
+            }
+            else
+            {
+                status180.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[1]));
+            }
+            if (RightHandToShoulderYZDetector.status180())
+            {
+                status90.Foreground = new SolidColorBrush(Colors.Green);
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[2]));
+            }
+            else
+            {
+                status90.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[2]));
+            }
+
+            // Left Hand to Shoulder Exercise
+            // More info in the screen :)
+            goals = LeftHandToShoulderYZDetector.updateGoals(skeleton);
+            if (LeftHandToShoulderYZDetector.status0())
+            {
+                status0.Foreground = green;
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[0]));
+            }
+            else
+            {
+                status0.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[0]));
+            }
+            if (LeftHandToShoulderYZDetector.status90())
+            {
+                status180.Foreground = new SolidColorBrush(Colors.Green);
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[1]));
+            }
+            else
+            {
+                status180.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[1]));
+            }
+            if (LeftHandToShoulderYZDetector.status180())
+            {
+                status90.Foreground = new SolidColorBrush(Colors.Green);
+                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[2]));
+            }
+            else
+            {
+                status90.Foreground = new SolidColorBrush(Colors.Red);
+                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[2]));
+            }
         }
     }
 }

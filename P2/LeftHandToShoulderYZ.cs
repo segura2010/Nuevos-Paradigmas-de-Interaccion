@@ -9,7 +9,7 @@ using System.Windows.Documents;
 // IMPORTANT! If you are not using "Microsoft.Samples.Kinect.SkeletonBasics" namespace, you must chage it!
 namespace Microsoft.Samples.Kinect.SkeletonBasics
 {
-    public class RightHandToShoulderYZ
+    public class LeftHandToShoulderYZ
     {
         // Class usage example in "drawBone" function!
         private Skeleton skeleton;
@@ -22,7 +22,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private List<SkeletonPoint> goals;
 
-        public RightHandToShoulderYZ()
+        public LeftHandToShoulderYZ()
         {
             detected180 = false;
             detected90 = false;
@@ -34,7 +34,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         public bool detection(Skeleton s)
         { // Idea: to search for elbow's angle .
-            // 1º-> 180º (lined/right)
+            // 1º-> 180º (lined/Left)
             //      O
             //   -- | --
             // 2º -> 90º (L)
@@ -50,10 +50,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             skeleton = s;
 
             // Get all important points..
-            Joint shoulder = skeleton.Joints[JointType.ShoulderRight];
-            Joint elbow = skeleton.Joints[JointType.ElbowRight];
-            Joint wrist = skeleton.Joints[JointType.WristRight];
-            Joint hand = skeleton.Joints[JointType.HandRight];
+            Joint shoulder = skeleton.Joints[JointType.ShoulderLeft];
+            Joint elbow = skeleton.Joints[JointType.ElbowLeft];
+            Joint wrist = skeleton.Joints[JointType.WristLeft];
+            Joint hand = skeleton.Joints[JointType.HandLeft];
 
             // Preparing vectors to get key angle
             myPoint vShoulderElbow = new myPoint();
@@ -64,7 +64,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             // I need shoulder and elbow in the same height (more or less)
             // and same depth between wrist and elbow! Dont cheat!!
-            similarPos = similarY(shoulder, elbow) && similarZ(elbow, wrist); 
+            similarPos = similarY(shoulder, elbow) && similarZ(elbow, wrist);
 
             if (similarPos)
             {   // Only if i have shoulder and elbow in the same height i am doing the correct movement
@@ -118,8 +118,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public bool myZones(JointType p1, JointType p2)
         {   // This function return true if joints types are both zones that this detection's class must detect
             // You could use it to know if you should draw pens with special colors..
-            bool p1IsZone = (p1.Equals(JointType.ShoulderRight) || p1.Equals(JointType.ElbowRight) || p1.Equals(JointType.WristRight) || p1.Equals(JointType.HandRight));
-            bool p2IsZone = (p2.Equals(JointType.ShoulderRight) || p2.Equals(JointType.ElbowRight) || p2.Equals(JointType.WristRight) || p2.Equals(JointType.HandRight));
+            bool p1IsZone = (p1.Equals(JointType.ShoulderLeft) || p1.Equals(JointType.ElbowLeft) || p1.Equals(JointType.WristLeft) || p1.Equals(JointType.HandLeft));
+            bool p2IsZone = (p2.Equals(JointType.ShoulderLeft) || p2.Equals(JointType.ElbowLeft) || p2.Equals(JointType.WristLeft) || p2.Equals(JointType.HandLeft));
 
             return (p1IsZone && p2IsZone);
         }
@@ -154,28 +154,28 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         public List<SkeletonPoint> updateGoals(Skeleton skeleton)
         {
-            SkeletonPoint shoulder = skeleton.Joints[JointType.ShoulderRight].Position;
-            SkeletonPoint elbow = skeleton.Joints[JointType.ElbowRight].Position;
-            SkeletonPoint wrist = skeleton.Joints[JointType.WristRight].Position;
-            SkeletonPoint hand = skeleton.Joints[JointType.HandRight].Position;
+            SkeletonPoint shoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
+            SkeletonPoint elbow = skeleton.Joints[JointType.ElbowLeft].Position;
+            SkeletonPoint wrist = skeleton.Joints[JointType.WristLeft].Position;
+            SkeletonPoint hand = skeleton.Joints[JointType.HandLeft].Position;
 
             // Im going to calc length between elbow and wrist
-            myPoint v = pointsToVector(skeleton.Joints[JointType.ElbowRight], skeleton.Joints[JointType.WristRight]);
+            myPoint v = pointsToVector(skeleton.Joints[JointType.ElbowLeft], skeleton.Joints[JointType.WristLeft]);
             double elbowWristLength = vectorModule(v);
 
             // Im going to calc length between elbow and wrist
-            v = pointsToVector(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.WristRight]);
+            v = pointsToVector(skeleton.Joints[JointType.ShoulderLeft], skeleton.Joints[JointType.WristLeft]);
             double shoulderSameWidthWrist = vectorModule(v);
 
             // Im going to calc length between elbow and wrist
-            v = pointsToVector(skeleton.Joints[JointType.ShoulderRight], skeleton.Joints[JointType.ElbowRight]);
+            v = pointsToVector(skeleton.Joints[JointType.ShoulderLeft], skeleton.Joints[JointType.ElbowLeft]);
             double shoulderToElbow = vectorModule(v);
 
             SkeletonPoint elbowHelp = shoulder;
             elbowHelp.Y = elbowHelp.Y + (float)elbowWristLength;
-            elbowHelp.X = elbowHelp.X + (float)shoulderToElbow;
+            elbowHelp.X = elbowHelp.X - (float)shoulderToElbow;
             SkeletonPoint wristHelp = shoulder;
-            wristHelp.X = wristHelp.X + (float)shoulderSameWidthWrist;
+            wristHelp.X = wristHelp.X - (float)shoulderSameWidthWrist;
 
             goals = new List<SkeletonPoint>();
             goals.Add(wristHelp);
@@ -187,11 +187,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
     }
 
-    // Useful struct to work with 3D points
+    /* Useful struct to work with 3D points
     public struct myPoint
     {
         public double x;
         public double y;
         public double z;
     }
+     * */
 }
