@@ -61,7 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LeftHandToShoulderXY.cs" />
     <Compile Include="LeftHandToShoulderYZ.cs" />
+    <Compile Include="RightHandToShoulderXY.cs" />
     <Compile Include="RightHandToShoulderYZ.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

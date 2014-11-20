@@ -105,6 +105,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         // Move detection objects!!
         private RightHandToShoulderYZ RightHandToShoulderYZDetector = new RightHandToShoulderYZ();
         private LeftHandToShoulderYZ LeftHandToShoulderYZDetector = new LeftHandToShoulderYZ();
+        private RightHandToShoulderXY RightHandToShoulderXYDetector = new RightHandToShoulderXY();
+        private LeftHandToShoulderXY LeftHandToShoulderXYDetector = new LeftHandToShoulderXY();
+        TimeSpan startTime = TimeSpan.Zero;
 
 
 
@@ -114,6 +117,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public MainWindow()
         {
             InitializeComponent();
+            
+                // Bienvenido al juego de ejercicio de Barcenas. En este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. El objetivo es recoger el mayor número de monedas. Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas te dará algo más de dinero dependiendo de lo que le hayas gustado. VAMOS! NO DEJES TU SOBRE VACIO!
+            resultStats.Text = "Bienvenido al juego de ejercicio de Barcenas.\nEn este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. \nEl objetivo es recoger el mayor número de monedas. \nLas monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! \nSi no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. \nAl final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas\n te dará algo más de dinero dependiendo de lo que le hayas gustado. \nVAMOS! NO DEJES TU SOBRE VACIO!";
         }
 
         /// <summary>
@@ -316,9 +322,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
         {
-
+            
             ejercicio(skeleton, drawingContext);
 
+            /*
             // Render Torso
             this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
@@ -367,6 +374,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
                 }
             }
+             * */
         }
 
         /// <summary>
@@ -428,17 +436,48 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         int leftArmSuccess = 0;
         int bothArms = 0;
 
-        private void drawHelpPoints(Brush bru, DrawingContext dc, Point p)
-        {
+        int nEjercicio = 0;
+
+        // Coins
+        FormattedText oneEuro = new FormattedText(
+                                    "1€",
+                                    CultureInfo.GetCultureInfo("es-ES"),
+                                    FlowDirection.LeftToRight,
+                                    new Typeface("Arial Black"),
+                                    32,
+                                    Brushes.Gray);
+
+        FormattedText twoEuro = new FormattedText(
+                                    "2€",
+                                    CultureInfo.GetCultureInfo("es-ES"),
+                                    FlowDirection.LeftToRight,
+                                    new Typeface("Arial Black"),
+                                    32,
+                                    Brushes.Gray);
+
+        FormattedText fiveEuro = new FormattedText(
+                                    "5€",
+                                    CultureInfo.GetCultureInfo("es-ES"),
+                                    FlowDirection.LeftToRight,
+                                    new Typeface("Arial Black"),
+                                    32,
+                                    Brushes.Gray);
+
+        private void drawHelpPoints(Brush bru, DrawingContext dc, SkeletonPoint skP, FormattedText text)
+        {   // Draw Help Points (Coins)
+            Point p = SkeletonPointToScreen(skP);
             dc.DrawEllipse(bru, null, p, 10, 10);
+            dc.DrawText(text, p);
         }
 
-        private void ejercicio(Skeleton skeleton, DrawingContext drawingContext)
+        private void ejercicioYZ(Skeleton skeleton, DrawingContext drawingContext)
         {
 
             SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
             SkeletonPoint rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
             SkeletonPoint leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
+            SkeletonPoint leftWrist = skeleton.Joints[JointType.WristLeft].Position;
+            SkeletonPoint rightWrist = skeleton.Joints[JointType.WristRight].Position;
 
             FormattedText bothCountText = new FormattedText(
                                         "Ambos: " + bothArms,
@@ -465,12 +504,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         Brushes.Blue);
 
             FormattedText bothOkText = new FormattedText(
-                                        "Fiesta Suprema!! +2",
+                                        "SIGUIENTE EJERCICIO!",
                                         CultureInfo.GetCultureInfo("es-ES"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Arial Black"),
-                                        32,
-                                        Brushes.Green);
+                                        40,
+                                        Brushes.Pink);
 
             FormattedText oneOkText = new FormattedText(
                                         "Perfecto! +1",
@@ -499,6 +538,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 bothArms++;
                 rightArmSuccess++;
                 leftArmSuccess++;
+                nEjercicio = 0;
+                LeftHandToShoulderYZDetector.resetDetecttion();
+                RightHandToShoulderYZDetector.resetDetecttion();
             }
             else if (rightOk)
             {
@@ -517,33 +559,27 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Brush green = new SolidColorBrush(Colors.Green);
             if (RightHandToShoulderYZDetector.status0())
             {
-                status0.Foreground = green;
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[0]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, oneEuro);
             }
             else
             {
-                status0.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[0]));
+                drawHelpPoints(red, drawingContext, goals[0], oneEuro);
             }
             if (RightHandToShoulderYZDetector.status90())
             {
-                status180.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[1]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, twoEuro);
             }
             else
             {
-                status180.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[1]));
+                drawHelpPoints(red, drawingContext, goals[1], twoEuro);
             }
             if (RightHandToShoulderYZDetector.status180())
             {
-                status90.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[2]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, fiveEuro);
             }
             else
             {
-                status90.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[2]));
+                drawHelpPoints(red, drawingContext, goals[2], fiveEuro);
             }
 
             // Left Hand to Shoulder Exercise
@@ -551,34 +587,221 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             goals = LeftHandToShoulderYZDetector.updateGoals(skeleton);
             if (LeftHandToShoulderYZDetector.status0())
             {
-                status0.Foreground = green;
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[0]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
             }
             else
             {
-                status0.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[0]));
+                drawHelpPoints(red, drawingContext, goals[0], oneEuro);
             }
             if (LeftHandToShoulderYZDetector.status90())
             {
-                status180.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[1]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
             }
             else
             {
-                status180.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[1]));
+                drawHelpPoints(red, drawingContext, goals[1], oneEuro);
             }
             if (LeftHandToShoulderYZDetector.status180())
             {
-                status90.Foreground = new SolidColorBrush(Colors.Green);
-                drawHelpPoints(green, drawingContext, SkeletonPointToScreen(goals[2]));
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
             }
             else
             {
-                status90.Foreground = new SolidColorBrush(Colors.Red);
-                drawHelpPoints(red, drawingContext, SkeletonPointToScreen(goals[2]));
+                drawHelpPoints(red, drawingContext, goals[2], oneEuro);
             }
+        }
+
+
+        private void ejercicioXY(Skeleton skeleton, DrawingContext drawingContext)
+        {
+
+            SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
+            SkeletonPoint rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
+            SkeletonPoint leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
+            SkeletonPoint leftWrist = skeleton.Joints[JointType.WristLeft].Position;
+            SkeletonPoint rightWrist = skeleton.Joints[JointType.WristRight].Position;
+
+            FormattedText bothCountText = new FormattedText(
+                                        "Ambos: " + bothArms,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText rightCountText = new FormattedText(
+                                        "Derecha: " + rightArmSuccess,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText leftCountText = new FormattedText(
+                                        "Izquierda: " + leftArmSuccess,
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Blue);
+
+            FormattedText bothOkText = new FormattedText(
+                                        "SIGUIENTE EJERCICIO!",
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        40,
+                                        Brushes.Pink);
+
+            FormattedText oneOkText = new FormattedText(
+                                        "Perfecto! +1",
+                                        CultureInfo.GetCultureInfo("es-ES"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Arial Black"),
+                                        32,
+                                        Brushes.Green);
+
+
+            Point textPoint = new Point(2, 2);
+            drawingContext.DrawText(leftCountText, textPoint);
+
+            textPoint = new Point(410, 2);
+            drawingContext.DrawText(rightCountText, textPoint);
+
+            textPoint = new Point(240, 50);
+            drawingContext.DrawText(bothCountText, textPoint);
+
+
+            // Right Hand to Shoulder Exercise
+            bool rightOk = RightHandToShoulderXYDetector.detection(skeleton);
+            bool leftOk = LeftHandToShoulderXYDetector.detection(skeleton);
+            if (rightOk && leftOk)
+            {
+                drawingContext.DrawText(bothOkText, SkeletonPointToScreen(head));
+                bothArms++;
+                rightArmSuccess++;
+                leftArmSuccess++;
+                nEjercicio = 1;
+                LeftHandToShoulderXYDetector.resetDetecttion();
+                RightHandToShoulderXYDetector.resetDetecttion();
+            }
+            else if (rightOk)
+            {
+                drawingContext.DrawText(oneOkText, SkeletonPointToScreen(rightShoulder));
+                rightArmSuccess++;
+            }
+            else if (leftOk)
+            {
+                drawingContext.DrawText(oneOkText, SkeletonPointToScreen(leftShoulder));
+                leftArmSuccess++;
+            }
+
+            // More info in the screen :)
+            List<SkeletonPoint> goals = RightHandToShoulderXYDetector.updateGoals(skeleton);
+            Brush red = new SolidColorBrush(Colors.Red);
+            Brush green = new SolidColorBrush(Colors.Green);
+            if (RightHandToShoulderXYDetector.status0())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, oneEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[0], oneEuro);
+            }
+            if (RightHandToShoulderXYDetector.status90())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, twoEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[1], twoEuro);
+            }
+            if (RightHandToShoulderXYDetector.status180())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, rightWrist, fiveEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[2], fiveEuro);
+            }
+
+            // Left Hand to Shoulder Exercise
+            // More info in the screen :)
+            goals = LeftHandToShoulderXYDetector.updateGoals(skeleton);
+            if (LeftHandToShoulderXYDetector.status0())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[0], oneEuro);
+            }
+            if (LeftHandToShoulderXYDetector.status90())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[1], oneEuro);
+            }
+            if (LeftHandToShoulderXYDetector.status180())
+            {
+                drawHelpPoints(Brushes.Yellow, drawingContext, leftWrist, oneEuro);
+            }
+            else
+            {
+                drawHelpPoints(red, drawingContext, goals[2], oneEuro);
+            }
+        }
+
+        // To control actual exercise to do.
+        private void ejercicio(Skeleton skeleton, DrawingContext drawingContext)
+        {
+            //if(DateTime.Now.TimeOfDay < ) // si queda tiempo sigo con los ejercicio, sino finishGame
+            if (nEjercicio == 0)
+            {
+                ejercicioXY(skeleton, drawingContext);
+            }
+            else if (nEjercicio == 1)
+            {
+                ejercicioYZ(skeleton, drawingContext);
+            }
+        }
+
+        private void startGame(object sender, RoutedEventArgs e)
+        {
+            ImageV.Visibility = Visibility.Visible;
+            Image2V.Visibility = Visibility.Visible;
+            startButton.Visibility = Visibility.Hidden;
+
+            startTime = DateTime.Now.TimeOfDay;
+        }
+
+        private void finishGame()
+        {
+            ImageV.Visibility = Visibility.Hidden;
+            Image2V.Visibility = Visibility.Hidden;
+            //startButton.Visibility = Visibility.Hidden;
+
+            resultStats.Text = "Has realizado " + bothArms + " ejercicios correctamente!";
+            resultStats.Text += "\nHas ganado " + bothArms*8*2 + " Euros en total! ";
+            resultStats.Text += "Y ahora.. Barcenas dará su veredicto y te llenará el sobre de acuerdo\n a tu habilidad.";
+            resultStats.Text += "\nBarcenas te da: 100€";
+            /*
+            if (bothArms < 4)
+            {
+                medal.Source = new BitmapImage(new Uri("Images/100.jpg", UriKind.Absolute));
+            }
+            else if (bothArms > 4 && bothArms < 8)
+            {
+                medal.Source = new BitmapImage(new Uri("Images/200.jpg", UriKind.Absolute));
+            }
+            else if (bothArms > 8)
+            {
+                medal.Source = new BitmapImage(new Uri("Images/500.jpg", UriKind.Absolute));
+            }
+             * */
+
         }
     }
 }

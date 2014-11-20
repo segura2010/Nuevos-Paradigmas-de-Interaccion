@@ -101,7 +101,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private bool similarY(Joint p1, Joint p2)
         {   // I want to know if two points are at the same height
-            return ((p1.Position.Y < (p2.Position.Y + 0.05)) && (p1.Position.Y > (p2.Position.Y - 0.05)));
+            return ((p1.Position.Y < (p2.Position.Y + 0.10)) && (p1.Position.Y > (p2.Position.Y - 0.10)));
         }
 
         private bool similarZ(Joint p1, Joint p2)
@@ -112,7 +112,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private bool similarAngle(double alpha, double beta)
         {   // This function sais if alpha is between beta+20 and beta-20 ->  beta-20 < alpha < beta+20
             // it is used to detect 0º, 90º and 180º angles.
-            return ((alpha < (beta + 30)) && (alpha > (beta - 30)));
+            return ((alpha < (beta + 40.0)) && (alpha > (beta - 40.0)));
         }
 
         public bool myZones(JointType p1, JointType p2)
@@ -183,6 +183,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             goals.Add(shoulder);
 
             return goals;
+        }
+
+        public void resetDetecttion()
+        {
+            detected180 = detected90 = detected0 = similarPos = false;
         }
 
     }
