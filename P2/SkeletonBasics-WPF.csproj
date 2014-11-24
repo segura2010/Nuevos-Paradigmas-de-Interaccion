@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -110,6 +111,48 @@
     <Resource Include="Images\CheckedNormal.png" />
     <Resource Include="Images\UncheckedHover.png" />
     <Resource Include="Images\UncheckedNormal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\100.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\200.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\500.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\bad.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\good.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\icon2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\icon3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\iconBarcenas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\pos3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\pos1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\pos2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\pos2b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\pos3b.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
