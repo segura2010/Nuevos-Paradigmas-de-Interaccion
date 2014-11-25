@@ -108,7 +108,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private LeftHandToShoulderYZ LeftHandToShoulderYZDetector = new LeftHandToShoulderYZ();
         private RightHandToShoulderXY RightHandToShoulderXYDetector = new RightHandToShoulderXY();
         private LeftHandToShoulderXY LeftHandToShoulderXYDetector = new LeftHandToShoulderXY();
-        int startTime = -1;
+        
 
 
 
@@ -118,19 +118,21 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public MainWindow()
         {
             InitializeComponent();
+            
             /*
             BitmapImage myBitmapImage = new BitmapImage();
 
             myBitmapImage.BeginInit();
-            myBitmapImage.UriSource = new Uri(@"C:\Users\Alberto-\Desktop\NPI\Repo\Nuevos-Paradigmas-de-Interaccion\P2\Images\iconBarcenas.png", UriKind.RelativeOrAbsolute);
+            myBitmapImage.UriSource = new Uri("iconBarcenas.png", UriKind.RelativeOrAbsolute);
             myBitmapImage.DecodePixelWidth = 1000;
             myBitmapImage.EndInit();
 
             icono_inicio.Width = 1000;
             icono_inicio.Source = myBitmapImage; 
              * */
+            
             // Bienvenido al juego de ejercicio de Barcenas. En este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. El objetivo es recoger el mayor número de monedas. Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas te dará algo más de dinero dependiendo de lo que le hayas gustado. VAMOS! NO DEJES TU SOBRE VACIO!
-            resultStats.Text = "Bienvenido al juego de ejercicio de Barcenas.\nEn este juego deberás realizar dos ejercicios\nuno detrás de otro durante 1 minuto. \nEl objetivo es recoger el mayor número de monedas. \nLas monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! \nSi no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. \nAl final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas\n te dará algo más de dinero dependiendo de lo que le hayas gustado. \nVAMOS! NO DEJES TU SOBRE VACIO!";
+            resultStats.Text = "Bienvenido al juego de ejercicio de Barcenas.\nEn este juego deberás realizar dos ejercicios\nuno detrás de otro durante 1 minuto. \nEl objetivo es recoger el mayor número de monedas. \nLas monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! \nSi no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. \nAl final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas\n te dará algo más de dinero dependiendo de lo que le hayas gustado. \nVAMOS! NO DEJES TU SOBRE VACIO! \nLos movimientos consisten en llevar tus manos hasta los hombros en el plano XY e YZ \nPara empezar a jugar lleva tu mano DERECHA a tu bolsillo, y entenderemos que quieres llenarlo..";
         }
 
         /// <summary>
@@ -453,6 +455,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         int timeBetweenMoves = 0;
 
+        bool gameHasStarted = false;
+        int diff = 0;
+        DateTime startTime = DateTime.Now;
+        DateTime finishTime = DateTime.Now;
+        int startTimeMin = -1;
+        int startTimeSec = -1;
+
         // Coins
         FormattedText oneEuro = new FormattedText(
                                     "1€",
@@ -488,18 +497,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private void ejercicioYZ(Skeleton skeleton, DrawingContext drawingContext)
         {
-            /*
-            BitmapImage myBitmapImage = new BitmapImage();
-
-            myBitmapImage.BeginInit();
-            //myBitmapImage.UriSource = new Uri(@"C:\Users\Alberto-\Desktop\NPI\Repo\Nuevos-Paradigmas-de-Interaccion\P2\Images\pos1.png", UriKind.RelativeOrAbsolute);
-            myBitmapImage.DecodePixelWidth = 500;
-            myBitmapImage.EndInit();
-
-            GuiaEsqueleto.Width = 500;
-            GuiaEsqueleto.Source = myBitmapImage;
-             * */
-
+            // This function will draw points and information about this exercise if the user must do it.
+            // It will draw help points in the screen
+            // it will detect moves
             SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
             SkeletonPoint rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
             SkeletonPoint leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
@@ -530,17 +530,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         32,
                                         Brushes.Green);
 
-            int diff = int.Parse(DateTime.Now.ToString("mmss")) - startTime;
-            FormattedText reamingTime = new FormattedText(
-                                        "Tiempo Consumido: "+diff,
+            FormattedText infoExercise = new FormattedText(
+                                        "Ejercicio 2. Eje YZ",
                                         CultureInfo.GetCultureInfo("es-ES"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Arial Black"),
                                         32,
-                                        Brushes.Blue);
+                                        Brushes.Green);
 
             Point textPoint = new Point(2, 2);
-            drawingContext.DrawText(reamingTime, textPoint);
+            drawingContext.DrawText(infoExercise, textPoint);
 
             textPoint = new Point(240, 50);
             drawingContext.DrawText(bothCountText, textPoint);
@@ -631,19 +630,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private void ejercicioXY(Skeleton skeleton, DrawingContext drawingContext)
         {
-            /*
-            BitmapImage myBitmapImage = new BitmapImage();
-
-            myBitmapImage.BeginInit();
-            //myBitmapImage.UriSource = new Uri(@"C:\Users\Alberto-\Desktop\NPI\Repo\Nuevos-Paradigmas-de-Interaccion\P2\Images\pos1.png", UriKind.RelativeOrAbsolute);
-
-            myBitmapImage.DecodePixelWidth = 500;
-            myBitmapImage.EndInit();
-
-            GuiaEsqueleto.Width = 500;
-            GuiaEsqueleto.Source = myBitmapImage; 
-             * */
-
+            // This function will draw points and information about this exercise if the user must do it.
+            // It will draw help points in the screen
+            // it will detect moves
             SkeletonPoint head = skeleton.Joints[JointType.Head].Position;
             SkeletonPoint rightShoulder = skeleton.Joints[JointType.ShoulderRight].Position;
             SkeletonPoint leftShoulder = skeleton.Joints[JointType.ShoulderLeft].Position;
@@ -674,17 +663,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         32,
                                         Brushes.Green);
 
-            int diff = int.Parse(DateTime.Now.ToString("mmss")) - startTime;
-            FormattedText reamingTime = new FormattedText(
-                                        "Tiempo Consumido: " + diff,
+            FormattedText infoExercise = new FormattedText(
+                                        "Ejercicio 1. Eje XY",
                                         CultureInfo.GetCultureInfo("es-ES"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Arial Black"),
                                         32,
-                                        Brushes.Blue);
+                                        Brushes.Green);
 
             Point textPoint = new Point(2, 2);
-            drawingContext.DrawText(reamingTime, textPoint);
+            drawingContext.DrawText(infoExercise, textPoint);
 
             textPoint = new Point(240, 50);
             drawingContext.DrawText(bothCountText, textPoint);
@@ -775,10 +763,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         // To control actual exercise to do.
         private void ejercicio(Skeleton skeleton, DrawingContext drawingContext)
         {
-            int diff = int.Parse(DateTime.Now.ToString("mmss")) - startTime;
-            statusBarText.Text = "Tiempo consumido: " + diff;
-            if (diff >= 60)
+            // This function will proccess each skeleton call to show in the screen points wich depends on exercise.
+            // if i have played 1 minute, it will finish the game.
+            TimeSpan diff = DateTime.Now - startTime;
+            statusBarText.Text = "Tiempo consumido: " + diff.Seconds;
+            if (gameHasStarted && (diff.Minutes == 1))
                 finishGame();
+            else if (!gameHasStarted)
+            {
+                detectStart(skeleton, drawingContext);
+            }
             if (nEjercicio == 0)
             {
                 ejercicioXY(skeleton, drawingContext);
@@ -790,28 +784,47 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             
         }
 
+        private void detectStart(Skeleton skeleton, DrawingContext drawingContext)
+        {
+            // This function will draw points and information about this exercise if the user must do it.
+            // It will draw help points in the screen
+            // it will detect moves
+            //SkeletonPoint rightHip = skeleton.Joints[JointType.Head].Position;
+            SkeletonPoint rightHip = skeleton.Joints[JointType.HipRight].Position;
+            SkeletonPoint rightWrist = skeleton.Joints[JointType.WristRight].Position;
+
+            bool detectS = ((rightHip.Z < (rightWrist.Z + 0.10)) && (rightHip.Z > (rightWrist.Z - 0.10))) &&
+                            ((rightHip.Y < (rightWrist.Y + 0.10)) && (rightHip.Y > (rightWrist.Y - 0.10))) &&
+                            ((rightHip.X < (rightWrist.X + 0.10)) && (rightHip.X > (rightWrist.X - 0.10)));
+
+            if (detectS)
+            {
+                startGame(null, null);
+            }
+        }
+
         private void startGame(object sender, RoutedEventArgs e)
         {
+            // This function prepare all to start the game.
+            // It shows the camera
+            // It start the timer
             ImageV.Visibility = Visibility.Visible;
             Image2V.Visibility = Visibility.Visible;
+
             startButton.Visibility = Visibility.Hidden;
 
-            /*
-            startTime = DateTime.Now.TimeOfDay;
-            startTime = startTime + startTime;
-             * */
-            startTime = int.Parse(DateTime.Now.ToString("mmss"));
+            medal.Visibility = Visibility.Hidden;
+            imagen_Resultado.Visibility = Visibility.Hidden;
 
-            //timer = new Timer(60000);
-            //timer.Elapsed += new ElapsedEventHandler(finishGame);
-            //timer.Start();
+            startTime = DateTime.Now;
+            gameHasStarted = true;
         }
 
         private void finishGame()
         {
-            
-            BitmapImage myBitmapImage;
-
+            // This function will finish the game.
+            // It will hide camera's image
+            // it will show user's result
             ImageV.Visibility = Visibility.Hidden;
             Image2V.Visibility = Visibility.Hidden;
             startButton.Visibility = Visibility.Hidden;
@@ -823,32 +836,31 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             if(bothArms<1)
             {
                 resultStats.Text += "\nBarcenas te da: NADA!!";
-                /*medal.Source = new BitmapImage(new Uri("Images/100.jpg", UriKind.Absolute));
-                myBitmapImage = new BitmapImage();
-
-                myBitmapImage.BeginInit();
-                myBitmapImage.UriSource = new Uri(@"C:\Users\Alberto-\Desktop\NPI\Repo\Nuevos-Paradigmas-de-Interaccion\P2\Images\bad.jpg", UriKind.RelativeOrAbsolute);
-                myBitmapImage.DecodePixelWidth = 1000;
-                myBitmapImage.EndInit();
-
-                imagen_Resultado.Width = 1000;
-                imagen_Resultado.Source = myBitmapImage; */
+                medal.Source = new BitmapImage(new Uri("Images/100.jpg", UriKind.Absolute));
+                imagen_Resultado.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/bad.jpg", UriKind.Absolute));
             }
             else if (bothArms < 4)
             {
                 resultStats.Text += "\nBarcenas te da: 100 €";
-                //medal.Source = new BitmapImage(new Uri("./Images/100.jpg", UriKind.Absolute));
+                medal.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/100.jpg", UriKind.Absolute));
+                imagen_Resultado.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/good.jpg", UriKind.Absolute));
             }
-            else if (bothArms > 4 && bothArms < 8)
+            else if (bothArms >= 4 && bothArms < 8)
             {
                 resultStats.Text += "\nBarcenas te da: 200 €";
-                //medal.Source = new BitmapImage(new Uri("./Images/200.jpg", UriKind.Absolute));
+                medal.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/200.jpg", UriKind.Absolute));
+                imagen_Resultado.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/good.jpg", UriKind.Absolute));
             }
-            else if (bothArms > 8)
+            else if (bothArms >= 8)
             {
                 resultStats.Text += "\nBarcenas te da: 500 €!!";
-                //medal.Source = new BitmapImage(new Uri("./Images/500.jpg", UriKind.Absolute));
+                medal.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/500.jpg", UriKind.Absolute));
+                imagen_Resultado.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/good.jpg", UriKind.Absolute));
             }
+
+            medal.Visibility = Visibility.Visible;
+            imagen_Resultado.Visibility = Visibility.Visible;
+            //gameHasStarted = false;
         }
     }
 }

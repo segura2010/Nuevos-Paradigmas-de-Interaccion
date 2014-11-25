@@ -64,11 +64,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             // I need shoulder and elbow in the same height (more or less)
             // and same depth between wrist and elbow! Dont cheat!!
-            similarPos = similarY(shoulder, elbow) && similarZ(elbow, wrist); 
+            similarPos = similarY(shoulder, elbow) && similarZ(elbow, wrist);
 
             if (similarPos)
             {   // Only if i have shoulder and elbow in the same height i am doing the correct movement
-                detected180 = (similarAngle(keyAngle, 180) || detected180);
+                detected180 = (similarAngle(keyAngle, 180) || detected180 || (((shoulder.Position.Z < (wrist.Position.Z + 0.15)) && (shoulder.Position.Z > (wrist.Position.Z - 0.15))) &&
+                            ((shoulder.Position.Y < (wrist.Position.Y + 0.15)) && (shoulder.Position.Y > (wrist.Position.Y - 0.15))) &&
+                            ((shoulder.Position.X < (wrist.Position.X + 0.15)) && (shoulder.Position.X > (wrist.Position.X - 0.15)))));
                 detected90 = (similarAngle(keyAngle, 90) || detected90);
                 detected0 = (similarAngle(keyAngle, 0) || detected0); // Be careful! I cannot detect 180º, 0º and 90º at the same time! So, I must "remember" older detections! -> Using "|| detected0"
             }

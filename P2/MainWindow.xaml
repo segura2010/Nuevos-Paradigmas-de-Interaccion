@@ -53,8 +53,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border Name="Stats" Margin="3,100,3.333,452.667" Background="White" Grid.RowSpan="2">
-            <TextBlock Name="resultStats" FontSize="20" Margin="0,111,-0.667,-111">Bienvenido al juego de ejercicio de Barcenas. En este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. El objetivo es recoger el mayor número de monedas. Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas te dará algo más de dinero dependiendo de lo que le hayas gustado. VAMOS! NO DEJES TU SOBRE VACIO!</TextBlock>
+        <Border Name="Stats" Margin="3,83,3.333,92.667" Background="White" Grid.RowSpan="2">
+            <TextBlock Name="resultStats" FontSize="14" Margin="0,111,-0.667,-111">Bienvenido al juego de ejercicio de Barcenas. En este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. El objetivo es recoger el mayor número de monedas. Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas te dará algo más de dinero dependiendo de lo que le hayas gustado. VAMOS! NO DEJES TU SOBRE VACIO!</TextBlock>
             <!--<Image Name="resultMoney" Width="640" Height="480"/>-->
         </Border>
         <DockPanel Grid.Row="0" Margin="0,0,30.333,65">
@@ -68,15 +68,23 @@
         </Viewbox>
         <!--<CheckBox Grid.Row="2" Style="{StaticResource SquareCheckBox}" Content="Seated Mode" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 10 10 10" Name="checkBoxSeatedMode" Checked="CheckBoxSeatedModeChanged" Unchecked="CheckBoxSeatedModeChanged"/>-->
         <StatusBar Grid.Row="3" HorizontalAlignment="Stretch" Name="statusBar" VerticalAlignment="Bottom" Background="White" Foreground="{StaticResource MediumGreyBrush}">
-
             <TextBlock x:Name="statusBarText" Margin="90 0 0 0" FontSize="20" HorizontalAlignment="Right"><Run Language="es-es" Text="Status Kinect: OK!"/></TextBlock>
         </StatusBar>
 
         <Button Name="startButton" Click="startGame" Margin="3,423,-3.667,9.667" Grid.Row="1" >Iniciar Juego</Button>
         <Image Visibility="Hidden" Name="medal" Margin="3,423,-3.667,9.667" Grid.Row="1" />
-        <Image Visibility="Hidden" x:Name="GuiaEsqueleto" HorizontalAlignment="Left" Height="168" VerticalAlignment="Top" Width="260" Margin="496,-6,-14,0" IsManipulationEnabled="True" Grid.RowSpan="2"/>
-        <Image Visibility="Hidden" x:Name="imagen_Resultado" HorizontalAlignment="Left" Height="180" Margin="214,243,0,0" Grid.Row="1" VerticalAlignment="Top" Width="320" IsManipulationEnabled="True"/>
-        <Image Visibility="Hidden" x:Name="icono_inicio" HorizontalAlignment="Left" Height="100" Margin="0,49,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="100"/>
+        
+        <Image Visibility="Hidden" Name="imagen_Resultado" HorizontalAlignment="Left" Height="180" Margin="214,243,0,0" Grid.Row="1" VerticalAlignment="Top" Width="320" IsManipulationEnabled="True"/>
+        <Image Source="pack://siteoforigin:,,,/Images/iconBarcenas.png" Visibility="Visible" x:Name="icono_inicio" HorizontalAlignment="Left" Height="68" Margin="10,10,0,0" VerticalAlignment="Top" Width="69"/>
 
+        <Grid Visibility="Visible" Name="tutorial" Margin="33,109,10.333,156.667" Grid.RowSpan="2">
+            <Image Source="pack://siteoforigin:,,,/Images/pos1.png" Margin="25,49,533,-44"/>
+            <Image Source="pack://siteoforigin:,,,/Images/pos2.png"  HorizontalAlignment="Left" Height="92" VerticalAlignment="Top" Width="101" Margin="221,155,0,0" IsManipulationEnabled="True"/>
+            <Image Source="pack://siteoforigin:,,,/Images/pos2b.png" HorizontalAlignment="Left" Height="102" VerticalAlignment="Top" Width="101" Margin="221,276,0,0" IsManipulationEnabled="True"/>
+            <Image Source="pack://siteoforigin:,,,/Images/pos3.png" HorizontalAlignment="Left" Height="94" VerticalAlignment="Top" Width="101" Margin="338,153,0,0" IsManipulationEnabled="True"/>
+            <Image Source="pack://siteoforigin:,,,/Images/pos3b.png" HorizontalAlignment="Left" Height="94" VerticalAlignment="Top" Width="101" Margin="338,276,0,0" IsManipulationEnabled="True"/>
+        </Grid>
+        
+        
     </Grid>
 </Window>
