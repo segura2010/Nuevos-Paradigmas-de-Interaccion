@@ -108,8 +108,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private LeftHandToShoulderYZ LeftHandToShoulderYZDetector = new LeftHandToShoulderYZ();
         private RightHandToShoulderXY RightHandToShoulderXYDetector = new RightHandToShoulderXY();
         private LeftHandToShoulderXY LeftHandToShoulderXYDetector = new LeftHandToShoulderXY();
-        
-
 
 
         /// <summary>
@@ -118,21 +116,26 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         public MainWindow()
         {
             InitializeComponent();
-            
-            /*
-            BitmapImage myBitmapImage = new BitmapImage();
 
-            myBitmapImage.BeginInit();
-            myBitmapImage.UriSource = new Uri("iconBarcenas.png", UriKind.RelativeOrAbsolute);
-            myBitmapImage.DecodePixelWidth = 1000;
-            myBitmapImage.EndInit();
+            puntuacion.Visibility = Visibility.Hidden;
 
-            icono_inicio.Width = 1000;
-            icono_inicio.Source = myBitmapImage; 
-             * */
-            
-            // Bienvenido al juego de ejercicio de Barcenas. En este juego debereas realizar dos ejercicios uno detrás de otro durante 1 minuto. El objetivo es recoger el mayor número de monedas. Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas te dará algo más de dinero dependiendo de lo que le hayas gustado. VAMOS! NO DEJES TU SOBRE VACIO!
-            resultStats.Text = "Bienvenido al juego de ejercicio de Barcenas.\nEn este juego deberás realizar dos ejercicios\nuno detrás de otro durante 1 minuto. \nEl objetivo es recoger el mayor número de monedas. \nLas monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! \nSi no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. \nAl final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas\n te dará algo más de dinero dependiendo de lo que le hayas gustado. \nVAMOS! NO DEJES TU SOBRE VACIO! \nLos movimientos consisten en llevar tus manos hasta los hombros en el plano XY e YZ \nPara empezar a jugar lleva tu mano DERECHA a tu bolsillo, y entenderemos que quieres llenarlo..";
+            // Texto inicio del juego
+            resultStats.Text = "Bienvenido al juego de ejercicio de Barcenas.\n";
+            resultStats.Text += "En este juego deberás realizar 2 ejercicios\n";
+            resultStats.Text += "Uno detrás de otro, durante 1 minuto. \n";
+            resultStats.Text += "Los movimientos consisten en llevar tus manos hasta los hombros en el plano XY e YZ \n";
+            resultStats.Text += "La imagen del esqueleto te ayuda a hacerte una idea de cómo debes hacerlo. \n";
+            resultStats.Text += "\nEl objetivo del juego es recoger el mayor número de monedas. \n";
+            resultStats.Text += "Las monedas indican por donde debes pasar tus manos para realizar el movimiento, pero ten cuidado! \n";
+            resultStats.Text += "Si no lo haces bien se te caerán las monedas y tendrás que volver a empezar el ejercicio. \n";
+            resultStats.Text += "Al final del juego podrás ver cuantas monedas has conseguido, y además, el señor Barcenas\n";
+            resultStats.Text += "te dará algo más de dinero dependiendo de lo que le hayas ganado. \n";
+            resultStats.Text += "VAMOS! NO DEJES TU SOBRE VACIO! \n";
+            resultStats.Text += "\nPara empezar a jugar lleva tu mano DERECHA a tu bolsillo, y entenderemos que quieres llenarlo..";
+           
+            //Gif del esqueleto, muestra los dos movimientos a realizar
+            Guia_Esqueleto.Source = new System.Uri("pack://siteoforigin:,,,/Images/gif_guia_esqueleto_fast.gif", UriKind.Absolute);
+
         }
 
         /// <summary>
@@ -495,6 +498,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             dc.DrawText(text, p);
         }
 
+        /*
+          Función que detecta y procesa el segundo ejercicio en YZ
+        */
         private void ejercicioYZ(Skeleton skeleton, DrawingContext drawingContext)
         {
             // This function will draw points and information about this exercise if the user must do it.
@@ -531,7 +537,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         Brushes.Green);
 
             FormattedText infoExercise = new FormattedText(
-                                        "Ejercicio 2. Eje YZ",
+                                        "Ejercicio 2. Eje YZ. Mano hacia arriba hasta hombros.",
                                         CultureInfo.GetCultureInfo("es-ES"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Arial Black"),
@@ -539,7 +545,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         Brushes.Green);
 
             Point textPoint = new Point(2, 2);
-            drawingContext.DrawText(infoExercise, textPoint);
+            //drawingContext.DrawText(infoExercise, textPoint);
+            puntuacion.Text = infoExercise.Text;
 
             textPoint = new Point(240, 50);
             drawingContext.DrawText(bothCountText, textPoint);
@@ -627,7 +634,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
-
+        /*
+         Función que detecta y procesa el primer ejercicio en XY
+         */
         private void ejercicioXY(Skeleton skeleton, DrawingContext drawingContext)
         {
             // This function will draw points and information about this exercise if the user must do it.
@@ -664,7 +673,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         Brushes.Green);
 
             FormattedText infoExercise = new FormattedText(
-                                        "Ejercicio 1. Eje XY",
+                                        "Ejercicio 1. Eje XY. Mano hacia delante hasta hombros.",
                                         CultureInfo.GetCultureInfo("es-ES"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Arial Black"),
@@ -672,7 +681,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                                         Brushes.Green);
 
             Point textPoint = new Point(2, 2);
-            drawingContext.DrawText(infoExercise, textPoint);
+            //drawingContext.DrawText(infoExercise, textPoint);
+            puntuacion.Text = infoExercise.Text;
 
             textPoint = new Point(240, 50);
             drawingContext.DrawText(bothCountText, textPoint);
@@ -760,13 +770,23 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
-        // To control actual exercise to do.
+        /*
+           Función que controla los sucesos del juego llamando a las
+           funciones correspondientes:
+           -Cuando el juego ha comenzado y ha pasado 1 min -> finisGame() 
+           -Cuando el juego ha comenzado, por alguno de los dos eventos
+           (pulsar el botón de inicio o posición con mano cerca de la cadera)
+           -> detectStart(skeleton, drawingContext)
+           -Cuando el nEjercicio es igual a 0 (1º mov) ->  ejercicioXY(skeleton, drawingContext)
+           -Cuando el nEjercicio es igual a 1 (2º mov) -> ejercicioYZ(skeleton, drawingContext)
+         */
         private void ejercicio(Skeleton skeleton, DrawingContext drawingContext)
         {
             // This function will proccess each skeleton call to show in the screen points wich depends on exercise.
             // if i have played 1 minute, it will finish the game.
             TimeSpan diff = DateTime.Now - startTime;
             statusBarText.Text = "Tiempo consumido: " + diff.Seconds;
+
             if (gameHasStarted && (diff.Minutes == 1))
                 finishGame();
             else if (!gameHasStarted)
@@ -784,8 +804,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             
         }
 
+        /*
+           Función que detecta la posición inicial y llama a la función
+           que da comienzo al juego -> startGame()
+         */
         private void detectStart(Skeleton skeleton, DrawingContext drawingContext)
         {
+            
+            //GuiaEsqueleto.Stretch = Stretch.None;
+            //GuiaEsqueleto.Margin = new Thickness(20);
             // This function will draw points and information about this exercise if the user must do it.
             // It will draw help points in the screen
             // it will detect moves
@@ -803,6 +830,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
+        /*
+           Función que actualiza los controles/feedback de la pantalla del juego.
+         */
         private void startGame(object sender, RoutedEventArgs e)
         {
             // This function prepare all to start the game.
@@ -811,15 +841,24 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             ImageV.Visibility = Visibility.Visible;
             Image2V.Visibility = Visibility.Visible;
 
+            puntuacion.Visibility = Visibility.Visible;
+
             startButton.Visibility = Visibility.Hidden;
 
             medal.Visibility = Visibility.Hidden;
             imagen_Resultado.Visibility = Visibility.Hidden;
+            Guia_Esqueleto.Visibility = Visibility.Hidden;
+            resultStats.Visibility = Visibility.Hidden;
 
             startTime = DateTime.Now;
             gameHasStarted = true;
+
         }
 
+        /*
+           Función de fin de juego. Muestra los resultados por el 
+           jugador.
+         */
         private void finishGame()
         {
             // This function will finish the game.
@@ -829,14 +868,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Image2V.Visibility = Visibility.Hidden;
             startButton.Visibility = Visibility.Hidden;
 
+            resultStats.Visibility = Visibility.Visible;
             resultStats.Text = "Has realizado " + bothArms + " ejercicios correctamente!";
             resultStats.Text += "\nHas ganado " + bothArms * 8 * 2 + " Euros en total! ";
             resultStats.Text += "Y ahora.. Barcenas dará su veredicto y te llenará el\nsobre de acuerdo a tu habilidad.";
 
             if(bothArms<1)
             {
-                resultStats.Text += "\nBarcenas te da: NADA!!";
-                medal.Source = new BitmapImage(new Uri("Images/100.jpg", UriKind.Absolute));
+                resultStats.Text += "\nBarcenas te da: Un puñado de caramelos!!";
+                medal.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/caramelos2.jpg", UriKind.Absolute));
                 imagen_Resultado.Source = new BitmapImage(new Uri("pack://siteoforigin:,,,/Images/bad.jpg", UriKind.Absolute));
             }
             else if (bothArms < 4)

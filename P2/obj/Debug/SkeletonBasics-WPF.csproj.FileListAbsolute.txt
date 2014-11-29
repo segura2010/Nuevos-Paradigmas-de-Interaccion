@@ -47,3 +47,4 @@ C:\Users\Eva\Documents\GitHub\Kinect-NPI\Practica2\P2\obj\Debug\SkeletonBasics-W
 C:\Users\Eva\Documents\GitHub\Kinect-NPI\Practica2\P2\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
 C:\Users\Eva\Documents\GitHub\Kinect-NPI\Practica2\P2\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
 C:\Users\Alberto-\Desktop\NPI\Repo\Nuevos-Paradigmas-de-Interaccion\P2\bin\Debug\SkeletonBasics-WPF.exe.config
+C:\Users\Eva\Documents\GitHub\Kinect-NPI\Practica2\P2\bin\Debug\SkeletonBasics-WPF.exe.config
