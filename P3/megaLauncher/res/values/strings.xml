@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MegaLauncher</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="tutorial">Bienvenido a la app de fotos/vídeos!\nPara usar la app: \n
+        * Desliza con dos dedos hacia arriba para hacer una foto o hacia abajo para hacer un vídeo.\n\n
+        ** Dibuja una t para acceder a Twitter, una F para acceder a Facebook o una W para iniciar WhatsApp.
+    </string>
+
+</resources>

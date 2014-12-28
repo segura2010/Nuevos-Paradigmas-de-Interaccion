@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dip">
+
+    <android.gesture.GestureOverlayView
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:id="@+id/gesture_view"
+        android:gestureStrokeType="multiple"
+        android:eventsInterceptionEnabled="false"
+        android:layout_weight="1.0">
+
+            <npi.megalauncher.MultitouchView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tutorial"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center" />
+    </android.gesture.GestureOverlayView>
+</LinearLayout>
